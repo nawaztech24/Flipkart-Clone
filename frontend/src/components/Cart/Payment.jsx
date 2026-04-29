@@ -1,15 +1,15 @@
-import axios from "axios";
+import API from "../../api/axios";
 import { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import PriceSidebar from "./PriceSidebar";
 import { useSnackbar } from "notistack";
 import { useNavigate } from "react-router-dom";
 import MetaData from "../Layouts/MetaData";
-import { EMPTY_CART } from "../../constants/cartConstants"; 
+import { EMPTY_CART } from "../../constants/cartConstants";
 
 const Payment = () => {
   const navigate = useNavigate();
-  const dispatch = useDispatch(); 
+  const dispatch = useDispatch();
   const { enqueueSnackbar } = useSnackbar();
 
   const [method, setMethod] = useState("COD");
@@ -26,13 +26,29 @@ const Payment = () => {
     "OD" + Math.floor(100000000 + Math.random() * 900000000);
 
   const submitHandler = async () => {
-    if (processing) return;
+    console.log("CLICKED ");
+
+    if (processing) {
+      console.log("BLOCKED");
+      return;
+    }
+
+    //  SAFETY CHECKS
+    if (!cartItems || cartItems.length === 0) {
+      enqueueSnackbar("Cart is empty!", { variant: "warning" });
+      return;
+    }
+
+    if (!shippingInfo) {
+      enqueueSnackbar("Shipping info missing!", { variant: "warning" });
+      return;
+    }
 
     try {
+      setProcessing(true);
+
       if (method === "ONLINE") {
-        setProcessing(true);
         await new Promise((r) => setTimeout(r, 1200));
-        setProcessing(false);
         enqueueSnackbar("Payment Successful!", { variant: "success" });
       }
 
@@ -48,9 +64,11 @@ const Payment = () => {
             : { id: "FAKE_PAYMENT", status: "succeeded" },
       };
 
-      const res = await axios.post("/api/v1/order/new", order, {
-        withCredentials: true,
-      });
+      console.log("ORDER DATA:", order);
+
+      const res = await API.post("/order/new", order);
+
+      console.log("ORDER RESPONSE:", res.data);
 
       localStorage.setItem(
         "lastOrder",
@@ -61,20 +79,22 @@ const Payment = () => {
         })
       );
 
-      
       localStorage.removeItem("cartItems");
-      dispatch({ type: EMPTY_CART }); 
+      dispatch({ type: EMPTY_CART });
+
+      enqueueSnackbar("Order Placed Successfully!", { variant: "success" });
 
       navigate("/orders/success");
 
     } catch (err) {
-      setProcessing(false);
-      console.log(err.response?.data || err.message);
+      console.log("ERROR:", err.response?.data || err.message);
 
       enqueueSnackbar(
         err.response?.data?.message || "Order Failed",
         { variant: "error" }
       );
+    } finally {
+      setProcessing(false);
     }
   };
 

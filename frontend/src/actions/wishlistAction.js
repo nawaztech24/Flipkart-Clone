@@ -4,7 +4,8 @@ import { ADD_TO_WISHLIST, REMOVE_FROM_WISHLIST } from "../constants/wishlistCons
 // ADD TO WISHLIST
 export const addToWishlist = (id) => async (dispatch, getState) => {
     try {
-        const { data } = await API.get(`/api/v1/product/${id}`);
+        
+        const { data } = await API.get(`/product/${id}`);
 
         const product = data.product;
 

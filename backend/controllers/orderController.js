@@ -4,7 +4,6 @@ const Product = require('../models/productModel');
 const ErrorHandler = require('../utils/errorHandler');
 const sendEmail = require('../utils/sendEmail');
 
-
 // Create New Order
 exports.newOrder = asyncErrorHandler(async (req, res, next) => {
 
@@ -16,12 +15,19 @@ exports.newOrder = asyncErrorHandler(async (req, res, next) => {
         totalPrice,
     } = req.body;
 
+    // Validate items
+    if (!orderItems || orderItems.length === 0) {
+        return next(new ErrorHandler("No order items", 400));
+    }
+
+    // Validate payment (for CARD)
     if (paymentMethod === "CARD") {
         if (!paymentInfo || paymentInfo.status !== "succeeded") {
             return next(new ErrorHandler("Payment not completed", 400));
         }
     }
 
+    // Create order safely
     const order = await Order.create({
         shippingInfo,
         orderItems,
@@ -29,20 +35,33 @@ exports.newOrder = asyncErrorHandler(async (req, res, next) => {
         paymentMethod,
         totalPrice,
         paidAt: paymentMethod === "CARD" ? Date.now() : undefined,
-        user: req.user._id,
+
+        // Safe user assignment
+        user: req.user ? req.user._id : null,
     });
 
-    await sendEmail({
-        email: req.user.email,
-        subject: "Order Confirmed",
-        message: `
-            <h2>Order Confirmed ✅</h2>
-            <p><b>Order ID:</b> ${order._id}</p>
-            <p><b>Name:</b> ${req.user.name}</p>
-            <p><b>Total:</b> ₹${totalPrice}</p>
-            <p><b>Payment Method:</b> ${paymentMethod}</p>
-        `,
-    });
+    // Decide email source
+    const email = req.user?.email || shippingInfo?.email;
+    const name = req.user?.name || shippingInfo?.name || "Customer";
+
+    // Send confirmation email (safe)
+    if (email) {
+        try {
+            await sendEmail({
+                email: email,
+                subject: "Order Confirmed",
+                message: `
+                    <h2>Order Confirmed</h2>
+                    <p><b>Order ID:</b> ${order._id}</p>
+                    <p><b>Name:</b> ${name}</p>
+                    <p><b>Total:</b> ₹${totalPrice}</p>
+                    <p><b>Payment Method:</b> ${paymentMethod}</p>
+                `,
+            });
+        } catch (err) {
+            console.log("Email Error:", err.message);
+        }
+    }
 
     res.status(201).json({
         success: true,
@@ -70,7 +89,7 @@ exports.getSingleOrderDetails = asyncErrorHandler(async (req, res, next) => {
 // Get Logged In User Orders
 exports.myOrders = asyncErrorHandler(async (req, res, next) => {
 
-    const orders = await Order.find({ user: req.user._id });
+    const orders = await Order.find({ user: req.user?._id });
 
     if (!orders || orders.length === 0) {
         return next(new ErrorHandler("No Orders Found", 404));
@@ -83,7 +102,7 @@ exports.myOrders = asyncErrorHandler(async (req, res, next) => {
 });
 
 
-// Get All Orders ---ADMIN
+// Get All Orders (Admin)
 exports.getAllOrders = asyncErrorHandler(async (req, res, next) => {
 
     const orders = await Order.find();
@@ -105,7 +124,7 @@ exports.getAllOrders = asyncErrorHandler(async (req, res, next) => {
 });
 
 
-// Update Order Status ---ADMIN
+// Update Order Status (Admin)
 exports.updateOrder = asyncErrorHandler(async (req, res, next) => {
 
     const order = await Order.findById(req.params.id);
@@ -120,9 +139,10 @@ exports.updateOrder = asyncErrorHandler(async (req, res, next) => {
 
     if (req.body.status === "Shipped") {
         order.shippedAt = Date.now();
-        order.orderItems.forEach(async (i) => {
-            await updateStock(i.product, i.quantity)
-        });
+
+        for (const item of order.orderItems) {
+            await updateStock(item.product, item.quantity);
+        }
     }
 
     order.orderStatus = req.body.status;
@@ -134,12 +154,12 @@ exports.updateOrder = asyncErrorHandler(async (req, res, next) => {
     await order.save({ validateBeforeSave: false });
 
     res.status(200).json({
-        success: true
+        success: true,
     });
 });
 
 
-
+// Cancel Order
 exports.cancelOrder = asyncErrorHandler(async (req, res, next) => {
 
     const order = await Order.findById(req.params.id);
@@ -170,12 +190,13 @@ exports.cancelOrder = asyncErrorHandler(async (req, res, next) => {
 // Update Stock
 async function updateStock(id, quantity) {
     const product = await Product.findById(id);
+    if (!product) return;
     product.stock -= quantity;
     await product.save({ validateBeforeSave: false });
 }
 
 
-// Delete Order ---ADMIN
+// Delete Order (Admin)
 exports.deleteOrder = asyncErrorHandler(async (req, res, next) => {
 
     const order = await Order.findById(req.params.id);
@@ -184,7 +205,7 @@ exports.deleteOrder = asyncErrorHandler(async (req, res, next) => {
         return next(new ErrorHandler("Order Not Found", 404));
     }
 
-    await order.remove();
+    await order.deleteOne();
 
     res.status(200).json({
         success: true,
