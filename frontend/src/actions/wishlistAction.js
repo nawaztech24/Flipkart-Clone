@@ -1,10 +1,10 @@
-import axios from "axios";
+import API from "../api/axios";
 import { ADD_TO_WISHLIST, REMOVE_FROM_WISHLIST } from "../constants/wishlistConstants";
 
 // ADD TO WISHLIST
 export const addToWishlist = (id) => async (dispatch, getState) => {
     try {
-        const { data } = await axios.get(`/api/v1/product/${id}`);
+        const { data } = await API.get(`/api/v1/product/${id}`);
 
         const product = data.product;
 
@@ -15,13 +15,12 @@ export const addToWishlist = (id) => async (dispatch, getState) => {
                 name: product.name,
                 price: product.price,
                 cuttedPrice: product.cuttedPrice,
-                image: product.images?.[0]?.url || "/profile.png", // 🔥 SAFE
+                image: product.images?.[0]?.url || "/profile.png",
                 ratings: product.ratings,
                 reviews: product.numOfReviews,
             },
         });
 
-        // SAVE TO STORAGE
         localStorage.setItem(
             "wishlistItems",
             JSON.stringify(getState().wishlist.wishlistItems)
@@ -36,13 +35,11 @@ export const addToWishlist = (id) => async (dispatch, getState) => {
 // REMOVE FROM WISHLIST
 export const removeFromWishlist = (id) => (dispatch, getState) => {
     try {
-
         dispatch({
             type: REMOVE_FROM_WISHLIST,
             payload: id,
         });
 
-        //  UPDATE STORAGE
         localStorage.setItem(
             "wishlistItems",
             JSON.stringify(getState().wishlist.wishlistItems)

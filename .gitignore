@@ -25,3 +25,6 @@ yarn-error.log*
 coverage/
 .pnp
 .pnp.js
+backend/config/config.env
+.env
+.env.local

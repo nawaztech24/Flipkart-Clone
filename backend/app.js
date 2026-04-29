@@ -18,9 +18,10 @@ app.use(fileUpload());
 
 
 app.use(cors({
-    origin: "http://localhost:3000",
+    origin: true,   // allow all origins (best for now)
     credentials: true
 }));
+
 
 const user = require('./routes/userRoute');
 const product = require('./routes/productRoute');
