@@ -1,0 +1,57 @@
+/* 🔥 FIX: prevent left/right cut */
+.slick-list {
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+/* 🔥 spacing between slides */
+.slick-slide {
+  padding: 0 6px;
+}
+
+/* 🔥 arrows */
+.slick-arrow.slick-prev,
+.slick-arrow.slick-next {
+  width: 45px;
+  height: 100px;
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 6px 10px rgba(0,0,0,.2);
+  background: #fff;
+  color: #000;
+  z-index: 2;
+  cursor: pointer;
+}
+
+/* left arrow */
+.slick-prev {
+  left: 0;
+  border-radius: 0 5px 5px 0;
+}
+
+/* right arrow */
+.slick-next {
+  right: 0;
+  border-radius: 5px 0 0 5px;
+}
+
+/* remove default arrows */
+.slick-prev::before,
+.slick-next::before {
+  display: none;
+}
+
+/* 🔥 dots clean & centered */
+.slick-dots {
+  bottom: -8px;
+}
+
+.slick-dots li button:before {
+  font-size: 6px;
+  color: #c2c2c2;
+}
+
+.slick-dots li.slick-active button:before {
+  color: #2874f0;
+}
