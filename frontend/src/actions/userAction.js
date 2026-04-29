@@ -40,7 +40,7 @@ import {
 } from '../constants/userConstants';
 
 
-// Login User
+// ✅ Login User
 export const loginUser = (email, password) => async (dispatch) => {
     try {
         dispatch({ type: LOGIN_USER_REQUEST });
@@ -50,7 +50,7 @@ export const loginUser = (email, password) => async (dispatch) => {
         };
 
         const { data } = await API.post(
-            `/api/v1/login`,
+            `/login`,
             { email, password },
             config
         );
@@ -69,7 +69,7 @@ export const loginUser = (email, password) => async (dispatch) => {
 };
 
 
-// Register User
+// ✅ Register User
 export const registerUser = (userData) => async (dispatch) => {
     try {
         dispatch({ type: REGISTER_USER_REQUEST });
@@ -79,7 +79,7 @@ export const registerUser = (userData) => async (dispatch) => {
         };
 
         const { data } = await API.post(
-            `/api/v1/register`,
+            `/register`,
             userData,
             config
         );
@@ -98,12 +98,12 @@ export const registerUser = (userData) => async (dispatch) => {
 };
 
 
-// Load User
+// ✅ Load User
 export const loadUser = () => async (dispatch) => {
     try {
         dispatch({ type: LOAD_USER_REQUEST });
 
-        const { data } = await API.get(`/api/v1/me`);
+        const { data } = await API.get(`/me`);
 
         dispatch({
             type: LOAD_USER_SUCCESS,
@@ -119,10 +119,10 @@ export const loadUser = () => async (dispatch) => {
 };
 
 
-// Logout User
+// ✅ Logout User
 export const logoutUser = () => async (dispatch) => {
     try {
-        await API.get(`/api/v1/logout`);
+        await API.get(`/logout`);
         dispatch({ type: LOGOUT_USER_SUCCESS });
     } catch (error) {
         dispatch({
@@ -133,7 +133,7 @@ export const logoutUser = () => async (dispatch) => {
 };
 
 
-// Update Profile
+// ✅ Update Profile
 export const updateProfile = (userData) => async (dispatch) => {
     try {
         dispatch({ type: UPDATE_PROFILE_REQUEST });
@@ -143,7 +143,7 @@ export const updateProfile = (userData) => async (dispatch) => {
         };
 
         const { data } = await API.put(
-            `/api/v1/me/update`,
+            `/me/update`,
             userData,
             config
         );
@@ -162,7 +162,7 @@ export const updateProfile = (userData) => async (dispatch) => {
 };
 
 
-// Update Password
+// ✅ Update Password
 export const updatePassword = (passwords) => async (dispatch) => {
     try {
         dispatch({ type: UPDATE_PASSWORD_REQUEST });
@@ -172,7 +172,7 @@ export const updatePassword = (passwords) => async (dispatch) => {
         };
 
         const { data } = await API.put(
-            `/api/v1/password/update`,
+            `/password/update`,
             passwords,
             config
         );
@@ -191,7 +191,7 @@ export const updatePassword = (passwords) => async (dispatch) => {
 };
 
 
-// Forgot Password
+// ✅ Forgot Password
 export const forgotPassword = (email) => async (dispatch) => {
     try {
         dispatch({ type: FORGOT_PASSWORD_REQUEST });
@@ -201,7 +201,7 @@ export const forgotPassword = (email) => async (dispatch) => {
         };
 
         const { data } = await API.post(
-            `/api/v1/password/forgot`,
+            `/password/forgot`,
             email,
             config
         );
@@ -220,7 +220,7 @@ export const forgotPassword = (email) => async (dispatch) => {
 };
 
 
-// Reset Password
+// ✅ Reset Password
 export const resetPassword = (token, passwords) => async (dispatch) => {
     try {
         dispatch({ type: RESET_PASSWORD_REQUEST });
@@ -230,7 +230,7 @@ export const resetPassword = (token, passwords) => async (dispatch) => {
         };
 
         const { data } = await API.put(
-            `/api/v1/password/reset/${token}`,
+            `/password/reset/${token}`,
             passwords,
             config
         );
@@ -249,12 +249,12 @@ export const resetPassword = (token, passwords) => async (dispatch) => {
 };
 
 
-// Admin APIs
+// ✅ Admin APIs
 export const getAllUsers = () => async (dispatch) => {
     try {
         dispatch({ type: ALL_USERS_REQUEST });
 
-        const { data } = await API.get(`/api/v1/admin/users`);
+        const { data } = await API.get(`/admin/users`);
 
         dispatch({
             type: ALL_USERS_SUCCESS,
@@ -274,7 +274,7 @@ export const getUserDetails = (id) => async (dispatch) => {
     try {
         dispatch({ type: USER_DETAILS_REQUEST });
 
-        const { data } = await API.get(`/api/v1/admin/user/${id}`);
+        const { data } = await API.get(`/admin/user/${id}`);
 
         dispatch({
             type: USER_DETAILS_SUCCESS,
@@ -299,7 +299,7 @@ export const updateUser = (id, userData) => async (dispatch) => {
         };
 
         const { data } = await API.put(
-            `/api/v1/admin/user/${id}`,
+            `/admin/user/${id}`,
             userData,
             config
         );
@@ -322,7 +322,7 @@ export const deleteUser = (id) => async (dispatch) => {
     try {
         dispatch({ type: DELETE_USER_REQUEST });
 
-        const { data } = await API.delete(`/api/v1/admin/user/${id}`);
+        const { data } = await API.delete(`/admin/user/${id}`);
 
         dispatch({
             type: DELETE_USER_SUCCESS,
@@ -338,7 +338,7 @@ export const deleteUser = (id) => async (dispatch) => {
 };
 
 
-// Clear Errors
+// ✅ Clear Errors
 export const clearErrors = () => async (dispatch) => {
     dispatch({ type: CLEAR_ERRORS });
 };

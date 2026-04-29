@@ -35,13 +35,13 @@ import {
 } from "../constants/productConstants";
 
 
-//  Get All Products
+// Get All Products
 export const getProducts =
     (keyword = "", category, price = [0, 200000], ratings = 0, currentPage = 1) => async (dispatch) => {
         try {
             dispatch({ type: ALL_PRODUCTS_REQUEST });
 
-            let url = `/api/v1/products?`;
+            let url = `/products?`;
 
             if (keyword) {
                 url += `keyword=${keyword}&`;
@@ -69,12 +69,12 @@ export const getProducts =
     };
 
 
-//  Similar Products
+// Similar Products
 export const getSimilarProducts = (category) => async (dispatch) => {
     try {
         dispatch({ type: ALL_PRODUCTS_REQUEST });
 
-        const { data } = await API.get(`/api/v1/products?category=${category}`);
+        const { data } = await API.get(`/products?category=${category}`);
 
         dispatch({
             type: ALL_PRODUCTS_SUCCESS,
@@ -90,12 +90,12 @@ export const getSimilarProducts = (category) => async (dispatch) => {
 };
 
 
-//  Product Details
+// Product Details
 export const getProductDetails = (id) => async (dispatch) => {
     try {
         dispatch({ type: PRODUCT_DETAILS_REQUEST });
 
-        const { data } = await API.get(`/api/v1/product/${id}`);
+        const { data } = await API.get(`/product/${id}`);
 
         dispatch({
             type: PRODUCT_DETAILS_SUCCESS,
@@ -111,14 +111,16 @@ export const getProductDetails = (id) => async (dispatch) => {
 };
 
 
-//  New Review
+// New Review
 export const newReview = (reviewData) => async (dispatch) => {
     try {
         dispatch({ type: NEW_REVIEW_REQUEST });
 
-        const config = { headers: { "Content-Type": "application/json" } }
+        const config = {
+            headers: { "Content-Type": "application/json" },
+        };
 
-        const { data } = await API.put(`/api/v1/review`, reviewData, config);
+        const { data } = await API.put(`/review`, reviewData, config);
 
         dispatch({
             type: NEW_REVIEW_SUCCESS,
@@ -134,12 +136,12 @@ export const newReview = (reviewData) => async (dispatch) => {
 };
 
 
-//  Slider Products
+// Slider Products
 export const getSliderProducts = (section) => async (dispatch) => {
     try {
         dispatch({ type: SLIDER_PRODUCTS_REQUEST });
 
-        const { data } = await API.get(`/api/v1/products/section?section=${section}`);
+        const { data } = await API.get(`/products/section?section=${section}`);
 
         dispatch({
             type: SLIDER_PRODUCTS_SUCCESS,
@@ -158,12 +160,12 @@ export const getSliderProducts = (section) => async (dispatch) => {
 };
 
 
-//  Admin Products
+// Admin Products
 export const getAdminProducts = () => async (dispatch) => {
     try {
         dispatch({ type: ADMIN_PRODUCTS_REQUEST });
 
-        const { data } = await API.get(`/api/v1/admin/products`);
+        const { data } = await API.get(`/admin/products`);
 
         dispatch({
             type: ADMIN_PRODUCTS_SUCCESS,
@@ -179,14 +181,16 @@ export const getAdminProducts = () => async (dispatch) => {
 };
 
 
-//  Create Product
+// Create Product
 export const createProduct = (productData) => async (dispatch) => {
     try {
         dispatch({ type: NEW_PRODUCT_REQUEST });
 
-        const config = { headers: { "Content-Type": "application/json" } }
+        const config = {
+            headers: { "Content-Type": "application/json" },
+        };
 
-        const { data } = await API.post(`/api/v1/admin/product/new`, productData, config);
+        const { data } = await API.post(`/admin/product/new`, productData, config);
 
         dispatch({
             type: NEW_PRODUCT_SUCCESS,
@@ -202,14 +206,16 @@ export const createProduct = (productData) => async (dispatch) => {
 };
 
 
-//  Update Product
+// Update Product
 export const updateProduct = (id, productData) => async (dispatch) => {
     try {
         dispatch({ type: UPDATE_PRODUCT_REQUEST });
 
-        const config = { headers: { "Content-Type": "application/json" } }
+        const config = {
+            headers: { "Content-Type": "application/json" },
+        };
 
-        const { data } = await API.put(`/api/v1/admin/product/${id}`, productData, config);
+        const { data } = await API.put(`/admin/product/${id}`, productData, config);
 
         dispatch({
             type: UPDATE_PRODUCT_SUCCESS,
@@ -225,12 +231,12 @@ export const updateProduct = (id, productData) => async (dispatch) => {
 };
 
 
-//  Delete Product
+// Delete Product
 export const deleteProduct = (id) => async (dispatch) => {
     try {
         dispatch({ type: DELETE_PRODUCT_REQUEST });
 
-        const { data } = await API.delete(`/api/v1/admin/product/${id}`);
+        const { data } = await API.delete(`/admin/product/${id}`);
 
         dispatch({
             type: DELETE_PRODUCT_SUCCESS,
@@ -246,12 +252,12 @@ export const deleteProduct = (id) => async (dispatch) => {
 };
 
 
-//  Get Reviews
+// Get Reviews
 export const getAllReviews = (id) => async (dispatch) => {
     try {
         dispatch({ type: ALL_REVIEWS_REQUEST });
 
-        const { data } = await API.get(`/api/v1/admin/reviews?id=${id}`);
+        const { data } = await API.get(`/admin/reviews?id=${id}`);
 
         dispatch({
             type: ALL_REVIEWS_SUCCESS,
@@ -267,12 +273,12 @@ export const getAllReviews = (id) => async (dispatch) => {
 };
 
 
-//  Delete Review
+// Delete Review
 export const deleteReview = (reviewId, productId) => async (dispatch) => {
     try {
         dispatch({ type: DELETE_REVIEW_REQUEST });
 
-        const { data } = await API.delete(`/api/v1/admin/reviews?id=${reviewId}&productId=${productId}`);
+        const { data } = await API.delete(`/admin/reviews?id=${reviewId}&productId=${productId}`);
 
         dispatch({
             type: DELETE_REVIEW_SUCCESS,
@@ -288,7 +294,7 @@ export const deleteReview = (reviewId, productId) => async (dispatch) => {
 };
 
 
-//  Clear Errors
+// Clear Errors
 export const clearErrors = () => (dispatch) => {
     dispatch({ type: CLEAR_ERRORS });
 };

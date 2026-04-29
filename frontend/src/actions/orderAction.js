@@ -23,7 +23,7 @@ import {
 } from "../constants/orderConstants";
 
 
-//  NEW ORDER
+// NEW ORDER
 export const newOrder = (order) => async (dispatch) => {
   try {
     dispatch({ type: NEW_ORDER_REQUEST });
@@ -32,7 +32,7 @@ export const newOrder = (order) => async (dispatch) => {
       headers: { "Content-Type": "application/json" },
     };
 
-    const { data } = await API.post("/api/v1/order/new", order, config);
+    const { data } = await API.post("/order/new", order, config);
 
     dispatch({
       type: NEW_ORDER_SUCCESS,
@@ -48,12 +48,12 @@ export const newOrder = (order) => async (dispatch) => {
 };
 
 
-//  USER ORDERS
+// USER ORDERS
 export const myOrders = () => async (dispatch) => {
   try {
     dispatch({ type: MY_ORDERS_REQUEST });
 
-    const { data } = await API.get("/api/v1/orders/me");
+    const { data } = await API.get("/orders/me");
 
     dispatch({
       type: MY_ORDERS_SUCCESS,
@@ -69,12 +69,12 @@ export const myOrders = () => async (dispatch) => {
 };
 
 
-//  ORDER DETAILS
+// ORDER DETAILS
 export const getOrderDetails = (id) => async (dispatch) => {
   try {
     dispatch({ type: ORDER_DETAILS_REQUEST });
 
-    const { data } = await API.get(`/api/v1/order/${id}`);
+    const { data } = await API.get(`/order/${id}`);
 
     dispatch({
       type: ORDER_DETAILS_SUCCESS,
@@ -90,12 +90,12 @@ export const getOrderDetails = (id) => async (dispatch) => {
 };
 
 
-//  ADMIN - ALL ORDERS
+// ADMIN - ALL ORDERS
 export const getAllOrders = () => async (dispatch) => {
   try {
     dispatch({ type: ALL_ORDERS_REQUEST });
 
-    const { data } = await API.get("/api/v1/admin/orders");
+    const { data } = await API.get("/admin/orders");
 
     dispatch({
       type: ALL_ORDERS_SUCCESS,
@@ -111,7 +111,7 @@ export const getAllOrders = () => async (dispatch) => {
 };
 
 
-//  ADMIN - UPDATE ORDER
+// ADMIN - UPDATE ORDER
 export const updateOrder = (id, order) => async (dispatch) => {
   try {
     dispatch({ type: UPDATE_ORDER_REQUEST });
@@ -120,7 +120,7 @@ export const updateOrder = (id, order) => async (dispatch) => {
       headers: { "Content-Type": "application/json" },
     };
 
-    const { data } = await API.put(`/api/v1/admin/order/${id}`, order, config);
+    const { data } = await API.put(`/admin/order/${id}`, order, config);
 
     dispatch({
       type: UPDATE_ORDER_SUCCESS,
@@ -136,12 +136,12 @@ export const updateOrder = (id, order) => async (dispatch) => {
 };
 
 
-//  ADMIN - DELETE ORDER
+// ADMIN - DELETE ORDER
 export const deleteOrder = (id) => async (dispatch) => {
   try {
     dispatch({ type: DELETE_ORDER_REQUEST });
 
-    const { data } = await API.delete(`/api/v1/admin/order/${id}`);
+    const { data } = await API.delete(`/admin/order/${id}`);
 
     dispatch({
       type: DELETE_ORDER_SUCCESS,

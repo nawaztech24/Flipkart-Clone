@@ -27,27 +27,30 @@ const MyOrders = () => {
     const [search, setSearch] = useState("");
     const [filteredOrders, setFilteredOrders] = useState([]);
 
-    //  SAFE DEFAULT
     const { orders = [], loading, error } = useSelector((state) => state.myOrders);
 
+    // ✅ API call (ONLY ONCE)
+    useEffect(() => {
+        dispatch(myOrders());
+    }, [dispatch]);
+
+    // ✅ Error handling (separate)
     useEffect(() => {
         if (error) {
             enqueueSnackbar(error, { variant: "error" });
             dispatch(clearErrors());
         }
-        dispatch(myOrders());
-    }, [dispatch, error, enqueueSnackbar]);
+    }, [error, dispatch, enqueueSnackbar]);
 
+    // ✅ Set initial data
     useEffect(() => {
         if (!loading) {
             setFilteredOrders(orders || []);
         }
     }, [loading, orders]);
 
-    //  FILTER
+    // ✅ FILTER
     useEffect(() => {
-
-        if (!orders) return;
 
         let filtered = [...orders];
 
@@ -71,7 +74,7 @@ const MyOrders = () => {
 
     }, [status, orderTime, orders]);
 
-    // SEARCH
+    // ✅ SEARCH
     const searchOrders = (e) => {
         e.preventDefault();
 
@@ -92,6 +95,7 @@ const MyOrders = () => {
     const clearFilters = () => {
         setStatus("");
         setOrderTime(0);
+        setFilteredOrders(orders);
     };
 
     return (
