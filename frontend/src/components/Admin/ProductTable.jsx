@@ -138,7 +138,8 @@ const ProductTable = () => {
             sortable: false,
             renderCell: (params) => {
                 return (
-                    <Actions editRoute={"product"} deleteHandler={deleteProductHandler} id={params.row.id} />
+                    // ✅ ONLY FIX HERE
+                    <Actions editRoute={"admin/product"} deleteHandler={deleteProductHandler} id={params.row.id} />
                 );
             },
         },
