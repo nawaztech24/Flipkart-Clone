@@ -1,29 +1,34 @@
-const axios = require("axios");
+const nodemailer = require("nodemailer");
 
-const sendSMS = async (phone, message) => {
+const sendEmail = async (options) => {
     try {
-       
-        const cleanPhone = phone.toString().replace("+91", "").trim();
+        const transporter = nodemailer.createTransport({
+            host: "smtp.gmail.com",
+            port: 587,
+            secure: false,
+            auth: {
+                user: process.env.SMTP_MAIL,
+                pass: process.env.SMTP_PASSWORD,
+            },
+        });
 
-        const response = await axios.get(
-            "https://www.fast2sms.com/dev/bulkV2",
-            {
-                headers: {
-                    authorization: process.env.FAST2SMS_API_KEY, 
-                },
-                params: {
-                    route: "q",
-                    message: message,
-                    numbers: cleanPhone,
-                },
-            }
-        );
+        console.log("MAIL:", process.env.SMTP_MAIL);
+        console.log("PASS:", process.env.SMTP_PASSWORD ? "SET" : "NOT SET");
 
-        console.log("SMS SENT:", response.data);
+        const mailOptions = {
+            from: process.env.SMTP_MAIL,
+            to: options.email,
+            subject: options.subject,
+            html: options.message,
+        };
+
+        const info = await transporter.sendMail(mailOptions);
+
+        console.log("EMAIL SENT SUCCESS:", info.response);
 
     } catch (error) {
-        console.log("SMS ERROR:", error.response?.data || error.message);
+        console.log("EMAIL ERROR FULL:", error);
     }
 };
 
-module.exports = sendSMS;
+module.exports = sendEmail;
