@@ -56,7 +56,7 @@ exports.newOrder = asyncErrorHandler(async (req, res, next) => {
     const email = req.user?.email || shippingInfo?.email;
     const name = req.user?.name || shippingInfo?.name || "Customer";
 
-    // 🔥 FIXED: NO AWAIT (background execution)
+    
     if (email) {
         sendEmail({
             email: email,
