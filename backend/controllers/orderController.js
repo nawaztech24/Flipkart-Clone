@@ -3,11 +3,10 @@ const Order = require('../models/orderModel');
 const Product = require('../models/productModel');
 const ErrorHandler = require('../utils/errorHandler');
 const sendEmail = require('../utils/sendEmail');
+const sendSMS = require('../utils/sendSMS');
 
 // CREATE ORDER
 exports.newOrder = asyncErrorHandler(async (req, res, next) => {
-
-    console.log("REQ BODY:", req.body);
 
     let {
         shippingInfo,
@@ -17,13 +16,10 @@ exports.newOrder = asyncErrorHandler(async (req, res, next) => {
         totalPrice,
     } = req.body;
 
-    // ---------- SAFETY FIX (important) ----------
-    // Sometimes orderItems string me aata hai
     if (typeof orderItems === "string") {
         try {
             orderItems = JSON.parse(orderItems);
         } catch (e) {
-            console.log("Parse error:", e.message);
             return res.status(400).json({
                 success: false,
                 message: "Invalid order items format",
@@ -31,17 +27,13 @@ exports.newOrder = asyncErrorHandler(async (req, res, next) => {
         }
     }
 
-    // ---------- VALIDATION ----------
     if (!orderItems || !Array.isArray(orderItems) || orderItems.length === 0) {
-        console.log("INVALID ORDER ITEMS:", orderItems);
-
         return res.status(400).json({
             success: false,
             message: "No order items",
         });
     }
 
-    // payment validation
     if (paymentMethod === "CARD") {
         if (!paymentInfo || paymentInfo.status !== "succeeded") {
             return res.status(400).json({
@@ -51,7 +43,6 @@ exports.newOrder = asyncErrorHandler(async (req, res, next) => {
         }
     }
 
-    // ---------- CREATE ORDER ----------
     const order = await Order.create({
         shippingInfo,
         orderItems,
@@ -62,7 +53,6 @@ exports.newOrder = asyncErrorHandler(async (req, res, next) => {
         user: req.user ? req.user._id : null,
     });
 
-    // ---------- EMAIL ----------
     const email = req.user?.email || shippingInfo?.email;
     const name = req.user?.name || shippingInfo?.name || "Customer";
 
@@ -80,11 +70,23 @@ exports.newOrder = asyncErrorHandler(async (req, res, next) => {
                 `,
             });
         } catch (err) {
-            console.log("Email Error:", err.message);
+            console.log("FULL EMAIL ERROR:", err);
         }
     }
 
-    // ---------- RESPONSE ----------
+    const phone = shippingInfo?.phoneNo;
+
+    if (phone) {
+        try {
+            await sendSMS(
+                phone,
+                `Order placed! ID: ${order._id}, Amount: ₹${totalPrice}`
+            );
+        } catch (err) {
+            console.log("SMS ERROR:", err);
+        }
+    }
+
     return res.status(201).json({
         success: true,
         order,
@@ -176,34 +178,6 @@ exports.updateOrder = asyncErrorHandler(async (req, res, next) => {
 
     res.status(200).json({
         success: true,
-    });
-});
-
-
-// CANCEL ORDER
-exports.cancelOrder = asyncErrorHandler(async (req, res, next) => {
-
-    const order = await Order.findById(req.params.id);
-
-    if (!order) {
-        return next(new ErrorHandler("Order Not Found", 404));
-    }
-
-    if (order.orderStatus === "Delivered") {
-        return next(new ErrorHandler("Delivered order can't be cancelled", 400));
-    }
-
-    if (order.orderStatus === "Cancelled") {
-        return next(new ErrorHandler("Order already cancelled", 400));
-    }
-
-    order.orderStatus = "Cancelled";
-
-    await order.save({ validateBeforeSave: false });
-
-    res.status(200).json({
-        success: true,
-        message: "Order Cancelled Successfully",
     });
 });
 
