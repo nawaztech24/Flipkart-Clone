@@ -3,7 +3,6 @@ const Order = require('../models/orderModel');
 const Product = require('../models/productModel');
 const ErrorHandler = require('../utils/errorHandler');
 const sendEmail = require('../utils/sendEmail');
-const sendSMS = require('../utils/sendSMS');
 
 // CREATE ORDER
 exports.newOrder = asyncErrorHandler(async (req, res, next) => {
@@ -56,7 +55,6 @@ exports.newOrder = asyncErrorHandler(async (req, res, next) => {
     const email = req.user?.email || shippingInfo?.email;
     const name = req.user?.name || shippingInfo?.name || "Customer";
 
-    
     if (email) {
         sendEmail({
             email: email,
@@ -69,15 +67,6 @@ exports.newOrder = asyncErrorHandler(async (req, res, next) => {
                 <p><b>Payment Method:</b> ${paymentMethod}</p>
             `,
         }).catch(err => console.log("EMAIL ERROR:", err));
-    }
-
-    const phone = shippingInfo?.phoneNo;
-
-    if (phone) {
-        sendSMS(
-            phone,
-            `Order placed! ID: ${order._id}, Amount: ₹${totalPrice}`
-        ).catch(err => console.log("SMS ERROR:", err));
     }
 
     return res.status(201).json({
