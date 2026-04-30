@@ -182,6 +182,34 @@ exports.updateOrder = asyncErrorHandler(async (req, res, next) => {
 });
 
 
+// CANCEL ORDER (ADDED)
+exports.cancelOrder = asyncErrorHandler(async (req, res, next) => {
+
+    const order = await Order.findById(req.params.id);
+
+    if (!order) {
+        return next(new ErrorHandler("Order Not Found", 404));
+    }
+
+    if (order.orderStatus === "Delivered") {
+        return next(new ErrorHandler("Delivered order cannot be cancelled", 400));
+    }
+
+    order.orderStatus = "Cancelled";
+
+    for (const item of order.orderItems) {
+        await updateStock(item.product, item.quantity);
+    }
+
+    await order.save({ validateBeforeSave: false });
+
+    res.status(200).json({
+        success: true,
+        message: "Order Cancelled",
+    });
+});
+
+
 // STOCK UPDATE
 async function updateStock(id, quantity) {
     const product = await Product.findById(id);
