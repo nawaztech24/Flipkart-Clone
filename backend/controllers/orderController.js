@@ -56,35 +56,28 @@ exports.newOrder = asyncErrorHandler(async (req, res, next) => {
     const email = req.user?.email || shippingInfo?.email;
     const name = req.user?.name || shippingInfo?.name || "Customer";
 
+    // 🔥 FIXED: NO AWAIT (background execution)
     if (email) {
-        try {
-            await sendEmail({
-                email: email,
-                subject: "Order Confirmed",
-                message: `
-                    <h2>Order Confirmed</h2>
-                    <p><b>Order ID:</b> ${order._id}</p>
-                    <p><b>Name:</b> ${name}</p>
-                    <p><b>Total:</b> ₹${totalPrice}</p>
-                    <p><b>Payment Method:</b> ${paymentMethod}</p>
-                `,
-            });
-        } catch (err) {
-            console.log("FULL EMAIL ERROR:", err);
-        }
+        sendEmail({
+            email: email,
+            subject: "Order Confirmed",
+            message: `
+                <h2>Order Confirmed</h2>
+                <p><b>Order ID:</b> ${order._id}</p>
+                <p><b>Name:</b> ${name}</p>
+                <p><b>Total:</b> ₹${totalPrice}</p>
+                <p><b>Payment Method:</b> ${paymentMethod}</p>
+            `,
+        }).catch(err => console.log("EMAIL ERROR:", err));
     }
 
     const phone = shippingInfo?.phoneNo;
 
     if (phone) {
-        try {
-            await sendSMS(
-                phone,
-                `Order placed! ID: ${order._id}, Amount: ₹${totalPrice}`
-            );
-        } catch (err) {
-            console.log("SMS ERROR:", err);
-        }
+        sendSMS(
+            phone,
+            `Order placed! ID: ${order._id}, Amount: ₹${totalPrice}`
+        ).catch(err => console.log("SMS ERROR:", err));
     }
 
     return res.status(201).json({
@@ -182,7 +175,7 @@ exports.updateOrder = asyncErrorHandler(async (req, res, next) => {
 });
 
 
-// CANCEL ORDER (ADDED)
+// CANCEL ORDER
 exports.cancelOrder = asyncErrorHandler(async (req, res, next) => {
 
     const order = await Order.findById(req.params.id);

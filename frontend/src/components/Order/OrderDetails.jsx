@@ -2,7 +2,7 @@ import { useSnackbar } from 'notistack';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
-import axios from "axios";
+import API from "../../api/axios"; // ✅ FIXED (use same axios instance)
 import { clearErrors, getOrderDetails } from '../../actions/orderAction';
 import Loader from '../Layouts/Loader';
 import TrackStepper from './TrackStepper';
@@ -19,9 +19,6 @@ const OrderDetails = () => {
 
     useEffect(() => {
 
-        console.log("ORDER DETAILS ID:", params.id);
-
-        // FIX: prevent invalid API calls
         if (!params.id || params.id.length < 10) return;
 
         if (error) {
@@ -35,9 +32,8 @@ const OrderDetails = () => {
 
     const cancelHandler = async () => {
         try {
-            await axios.put(`/api/v1/order/${order._id}/cancel`, {}, {
-                withCredentials: true
-            });
+            // ✅ FIXED API CALL
+            await API.put(`/order/${order._id}/cancel`);
 
             enqueueSnackbar("Order Cancelled Successfully", { variant: "success" });
 
@@ -52,7 +48,6 @@ const OrderDetails = () => {
     return (
         <>
             <MetaData title="Order Details | Flipkart" />
-
             <MinCategory />
 
             <main className="w-full mt-14 sm:mt-4">
@@ -61,7 +56,6 @@ const OrderDetails = () => {
                         {order && order.user && order.shippingInfo && (
                             <div className="flex flex-col gap-4 max-w-6xl mx-auto">
 
-                                {/* ADDRESS */}
                                 <div className="flex bg-white shadow rounded-sm min-w-full">
                                     <div className="sm:w-1/2 border-r">
                                         <div className="flex flex-col gap-3 my-8 mx-10">
@@ -103,7 +97,6 @@ const OrderDetails = () => {
                                     </div>
                                 </div>
 
-                                {/* ITEMS */}
                                 {order.orderItems && order.orderItems.map((item) => {
 
                                     const { _id, image, name, price, quantity } = item;

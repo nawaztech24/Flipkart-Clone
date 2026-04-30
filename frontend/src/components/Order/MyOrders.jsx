@@ -29,12 +29,10 @@ const MyOrders = () => {
 
     const { orders = [], loading, error } = useSelector((state) => state.myOrders);
 
-    // ✅ API call (ONLY ONCE)
     useEffect(() => {
         dispatch(myOrders());
     }, [dispatch]);
 
-    // ✅ Error handling (separate)
     useEffect(() => {
         if (error) {
             enqueueSnackbar(error, { variant: "error" });
@@ -42,14 +40,12 @@ const MyOrders = () => {
         }
     }, [error, dispatch, enqueueSnackbar]);
 
-    // ✅ Set initial data
     useEffect(() => {
         if (!loading) {
             setFilteredOrders(orders || []);
         }
     }, [loading, orders]);
 
-    // ✅ FILTER
     useEffect(() => {
 
         let filtered = [...orders];
@@ -74,7 +70,6 @@ const MyOrders = () => {
 
     }, [status, orderTime, orders]);
 
-    // ✅ SEARCH
     const searchOrders = (e) => {
         e.preventDefault();
 
@@ -107,7 +102,6 @@ const MyOrders = () => {
 
                 <div className="flex gap-3.5 mt-2 sm:mt-6 sm:mx-3 m-auto mb-7">
 
-                    {/* LEFT FILTER */}
                     <div className="hidden sm:flex flex-col w-1/5 px-1">
 
                         <div className="flex flex-col bg-white rounded-sm shadow">
@@ -122,7 +116,6 @@ const MyOrders = () => {
                                 </span>
                             </div>
 
-                            {/* STATUS */}
                             <div className="px-4 py-3 text-sm">
                                 <span className="font-medium">ORDER STATUS</span>
 
@@ -147,7 +140,6 @@ const MyOrders = () => {
                                 </FormControl>
                             </div>
 
-                            {/* TIME */}
                             <div className="px-4 py-3 text-sm">
                                 <span className="font-medium">ORDER TIME</span>
 
@@ -171,13 +163,11 @@ const MyOrders = () => {
                         </div>
                     </div>
 
-                    {/* RIGHT */}
                     <div className="flex-1">
 
                         {loading ? <Loader /> : (
                             <div className="flex flex-col gap-3 sm:mr-4">
 
-                                {/* SEARCH */}
                                 <form onSubmit={searchOrders} className="flex bg-white border rounded">
                                     <input
                                         value={search}
@@ -192,14 +182,12 @@ const MyOrders = () => {
                                     </button>
                                 </form>
 
-                                {/* EMPTY */}
                                 {filteredOrders?.length === 0 && (
                                     <div className="p-6 bg-white text-center">
                                         No Orders Found
                                     </div>
                                 )}
 
-                                {/* LIST */}
                                 {filteredOrders?.map((order) => {
 
                                     const { _id, orderStatus, orderItems, createdAt, deliveredAt } = order;
@@ -212,6 +200,7 @@ const MyOrders = () => {
                                             orderStatus={orderStatus}
                                             createdAt={createdAt}
                                             deliveredAt={deliveredAt}
+                                            onCancelSuccess={() => dispatch(myOrders())} 
                                         />
                                     ));
                                 }).reverse()}
