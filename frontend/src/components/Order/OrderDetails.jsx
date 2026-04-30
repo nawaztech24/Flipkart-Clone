@@ -18,11 +18,19 @@ const OrderDetails = () => {
     const { order, error, loading } = useSelector((state) => state.orderDetails);
 
     useEffect(() => {
+
+        console.log("ORDER DETAILS ID:", params.id);
+
+        // FIX: prevent invalid API calls
+        if (!params.id || params.id.length < 10) return;
+
         if (error) {
             enqueueSnackbar(error, { variant: "error" });
             dispatch(clearErrors());
         }
+
         dispatch(getOrderDetails(params.id));
+
     }, [dispatch, error, params.id, enqueueSnackbar]);
 
     const cancelHandler = async () => {
@@ -75,7 +83,6 @@ const OrderDetails = () => {
                                                 <p>{order.shippingInfo.phoneNo}</p>
                                             </div>
 
-                                            {/* CANCEL BUTTON */}
                                             {order.orderStatus !== "Delivered" && order.orderStatus !== "Cancelled" && (
                                                 <button
                                                     onClick={cancelHandler}
@@ -85,7 +92,6 @@ const OrderDetails = () => {
                                                 </button>
                                             )}
 
-                                            {/* STATUS */}
                                             <p className={`mt-2 font-medium 
                                                 ${order.orderStatus === "Delivered" ? "text-green-600" :
                                                 order.orderStatus === "Cancelled" ? "text-red-600" :

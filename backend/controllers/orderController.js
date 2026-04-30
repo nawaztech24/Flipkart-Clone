@@ -4,10 +4,12 @@ const Product = require('../models/productModel');
 const ErrorHandler = require('../utils/errorHandler');
 const sendEmail = require('../utils/sendEmail');
 
-// Create New Order
+// CREATE ORDER
 exports.newOrder = asyncErrorHandler(async (req, res, next) => {
 
-    const {
+    console.log("REQ BODY:", req.body);
+
+    let {
         shippingInfo,
         orderItems,
         paymentInfo,
@@ -15,19 +17,41 @@ exports.newOrder = asyncErrorHandler(async (req, res, next) => {
         totalPrice,
     } = req.body;
 
-    // Validate items
-    if (!orderItems || orderItems.length === 0) {
-        return next(new ErrorHandler("No order items", 400));
-    }
-
-    // Validate payment (for CARD)
-    if (paymentMethod === "CARD") {
-        if (!paymentInfo || paymentInfo.status !== "succeeded") {
-            return next(new ErrorHandler("Payment not completed", 400));
+    // ---------- SAFETY FIX (important) ----------
+    // Sometimes orderItems string me aata hai
+    if (typeof orderItems === "string") {
+        try {
+            orderItems = JSON.parse(orderItems);
+        } catch (e) {
+            console.log("Parse error:", e.message);
+            return res.status(400).json({
+                success: false,
+                message: "Invalid order items format",
+            });
         }
     }
 
-    // Create order safely
+    // ---------- VALIDATION ----------
+    if (!orderItems || !Array.isArray(orderItems) || orderItems.length === 0) {
+        console.log("INVALID ORDER ITEMS:", orderItems);
+
+        return res.status(400).json({
+            success: false,
+            message: "No order items",
+        });
+    }
+
+    // payment validation
+    if (paymentMethod === "CARD") {
+        if (!paymentInfo || paymentInfo.status !== "succeeded") {
+            return res.status(400).json({
+                success: false,
+                message: "Payment not completed",
+            });
+        }
+    }
+
+    // ---------- CREATE ORDER ----------
     const order = await Order.create({
         shippingInfo,
         orderItems,
@@ -35,16 +59,13 @@ exports.newOrder = asyncErrorHandler(async (req, res, next) => {
         paymentMethod,
         totalPrice,
         paidAt: paymentMethod === "CARD" ? Date.now() : undefined,
-
-        // Safe user assignment
         user: req.user ? req.user._id : null,
     });
 
-    // Decide email source
+    // ---------- EMAIL ----------
     const email = req.user?.email || shippingInfo?.email;
     const name = req.user?.name || shippingInfo?.name || "Customer";
 
-    // Send confirmation email (safe)
     if (email) {
         try {
             await sendEmail({
@@ -63,15 +84,23 @@ exports.newOrder = asyncErrorHandler(async (req, res, next) => {
         }
     }
 
-    res.status(201).json({
+    // ---------- RESPONSE ----------
+    return res.status(201).json({
         success: true,
         order,
     });
 });
 
 
-// Get Single Order Details
+// GET SINGLE ORDER
 exports.getSingleOrderDetails = asyncErrorHandler(async (req, res, next) => {
+
+    if (!req.params.id || req.params.id.length < 10) {
+        return res.status(400).json({
+            success: false,
+            message: "Invalid Order ID",
+        });
+    }
 
     const order = await Order.findById(req.params.id).populate("user", "name email");
 
@@ -86,14 +115,10 @@ exports.getSingleOrderDetails = asyncErrorHandler(async (req, res, next) => {
 });
 
 
-// Get Logged In User Orders
+// USER ORDERS
 exports.myOrders = asyncErrorHandler(async (req, res, next) => {
 
     const orders = await Order.find({ user: req.user?._id });
-
-    if (!orders || orders.length === 0) {
-        return next(new ErrorHandler("No Orders Found", 404));
-    }
 
     res.status(200).json({
         success: true,
@@ -102,14 +127,10 @@ exports.myOrders = asyncErrorHandler(async (req, res, next) => {
 });
 
 
-// Get All Orders (Admin)
+// ADMIN ALL ORDERS
 exports.getAllOrders = asyncErrorHandler(async (req, res, next) => {
 
     const orders = await Order.find();
-
-    if (!orders) {
-        return next(new ErrorHandler("Order Not Found", 404));
-    }
 
     let totalAmount = 0;
     orders.forEach((order) => {
@@ -124,7 +145,7 @@ exports.getAllOrders = asyncErrorHandler(async (req, res, next) => {
 });
 
 
-// Update Order Status (Admin)
+// UPDATE ORDER
 exports.updateOrder = asyncErrorHandler(async (req, res, next) => {
 
     const order = await Order.findById(req.params.id);
@@ -159,7 +180,7 @@ exports.updateOrder = asyncErrorHandler(async (req, res, next) => {
 });
 
 
-// Cancel Order
+// CANCEL ORDER
 exports.cancelOrder = asyncErrorHandler(async (req, res, next) => {
 
     const order = await Order.findById(req.params.id);
@@ -187,7 +208,7 @@ exports.cancelOrder = asyncErrorHandler(async (req, res, next) => {
 });
 
 
-// Update Stock
+// STOCK UPDATE
 async function updateStock(id, quantity) {
     const product = await Product.findById(id);
     if (!product) return;
@@ -196,7 +217,7 @@ async function updateStock(id, quantity) {
 }
 
 
-// Delete Order (Admin)
+// DELETE ORDER
 exports.deleteOrder = asyncErrorHandler(async (req, res, next) => {
 
     const order = await Order.findById(req.params.id);

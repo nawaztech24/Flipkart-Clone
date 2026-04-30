@@ -8,9 +8,9 @@ import MetaData from "../Layouts/MetaData";
 import { EMPTY_CART } from "../../constants/cartConstants";
 
 const Payment = () => {
-  const navigate = useNavigate();
   const dispatch = useDispatch();
   const { enqueueSnackbar } = useSnackbar();
+  const navigate = useNavigate();
 
   const [method, setMethod] = useState("COD");
   const [processing, setProcessing] = useState(false);
@@ -18,22 +18,13 @@ const Payment = () => {
   const { shippingInfo, cartItems } = useSelector((state) => state.cart);
 
   const totalPrice = cartItems.reduce(
-    (sum, item) => sum + item.price * item.quantity,
+    (sum, item) => sum + Number(item.price) * Number(item.quantity),
     0
   );
 
-  const generateOrderId = () =>
-    "OD" + Math.floor(100000000 + Math.random() * 900000000);
-
   const submitHandler = async () => {
-    console.log("CLICKED ");
+    if (processing) return;
 
-    if (processing) {
-      console.log("BLOCKED");
-      return;
-    }
-
-    //  SAFETY CHECKS
     if (!cartItems || cartItems.length === 0) {
       enqueueSnackbar("Cart is empty!", { variant: "warning" });
       return;
@@ -47,15 +38,15 @@ const Payment = () => {
     try {
       setProcessing(true);
 
-      if (method === "ONLINE") {
-        await new Promise((r) => setTimeout(r, 1200));
-        enqueueSnackbar("Payment Successful!", { variant: "success" });
-      }
-
       const order = {
-        orderId: generateOrderId(),
         shippingInfo,
-        orderItems: cartItems,
+        orderItems: cartItems.map((item) => ({
+          name: item.name,
+          price: Number(item.price),
+          quantity: Number(item.quantity),
+          product: item.product || item._id,
+          image: item.image,
+        })),
         totalPrice,
         paymentMethod: method === "COD" ? "COD" : "CARD",
         paymentInfo:
@@ -64,27 +55,39 @@ const Payment = () => {
             : { id: "FAKE_PAYMENT", status: "succeeded" },
       };
 
-      console.log("ORDER DATA:", order);
+      console.log("SENDING ORDER:", order);
 
-      const res = await API.post("/order/new", order);
+      // ✅ CORRECT API CALL (NO stringify)
+      const res = await API.post("/order/new", order, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        withCredentials: true,
+      });
 
-      console.log("ORDER RESPONSE:", res.data);
+      const orderId = res.data?.order?._id;
+
+      if (!orderId) {
+        throw new Error("Order ID missing");
+      }
 
       localStorage.setItem(
         "lastOrder",
         JSON.stringify({
-          orderId: res.data.order._id,
-          totalPrice: order.totalPrice,
+          orderId,
+          totalPrice,
           paymentStatus: order.paymentInfo.status,
         })
       );
 
-      localStorage.removeItem("cartItems");
+      // clear cart
       dispatch({ type: EMPTY_CART });
+      localStorage.removeItem("cartItems");
 
       enqueueSnackbar("Order Placed Successfully!", { variant: "success" });
 
-      navigate("/orders/success");
+      // ✅ simple redirect (no extra API)
+      navigate("/", { replace: true });
 
     } catch (err) {
       console.log("ERROR:", err.response?.data || err.message);

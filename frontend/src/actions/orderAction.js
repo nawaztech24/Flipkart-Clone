@@ -23,7 +23,7 @@ import {
 } from "../constants/orderConstants";
 
 
-// NEW ORDER
+
 export const newOrder = (order) => async (dispatch) => {
   try {
     dispatch({ type: NEW_ORDER_REQUEST });
@@ -39,16 +39,22 @@ export const newOrder = (order) => async (dispatch) => {
       payload: data,
     });
 
+    
+    return { payload: data };
+
   } catch (error) {
     dispatch({
       type: NEW_ORDER_FAIL,
       payload: error.response?.data?.message || error.message,
     });
+
+    
+    throw error;
   }
 };
 
 
-// USER ORDERS
+
 export const myOrders = () => async (dispatch) => {
   try {
     dispatch({ type: MY_ORDERS_REQUEST });
@@ -69,7 +75,7 @@ export const myOrders = () => async (dispatch) => {
 };
 
 
-// ORDER DETAILS
+
 export const getOrderDetails = (id) => async (dispatch) => {
   try {
     dispatch({ type: ORDER_DETAILS_REQUEST });
@@ -90,7 +96,7 @@ export const getOrderDetails = (id) => async (dispatch) => {
 };
 
 
-// ADMIN - ALL ORDERS
+
 export const getAllOrders = () => async (dispatch) => {
   try {
     dispatch({ type: ALL_ORDERS_REQUEST });
@@ -111,7 +117,7 @@ export const getAllOrders = () => async (dispatch) => {
 };
 
 
-// ADMIN - UPDATE ORDER
+
 export const updateOrder = (id, order) => async (dispatch) => {
   try {
     dispatch({ type: UPDATE_ORDER_REQUEST });
@@ -136,7 +142,7 @@ export const updateOrder = (id, order) => async (dispatch) => {
 };
 
 
-// ADMIN - DELETE ORDER
+
 export const deleteOrder = (id) => async (dispatch) => {
   try {
     dispatch({ type: DELETE_ORDER_REQUEST });
@@ -157,7 +163,7 @@ export const deleteOrder = (id) => async (dispatch) => {
 };
 
 
-// Clear Errors
+
 export const clearErrors = () => (dispatch) => {
   dispatch({ type: CLEAR_ERRORS });
 };
