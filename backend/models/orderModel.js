@@ -30,14 +30,14 @@ const orderSchema = new mongoose.Schema({
         required: true
     },
 
-    //  NEW 
+    // Payment Method
     paymentMethod: {
         type: String,
         required: true,
         enum: ["COD", "CARD"],
     },
 
-    
+    //  Payment Info
     paymentInfo: {
         id: {
             type: String,
@@ -47,7 +47,6 @@ const orderSchema = new mongoose.Schema({
         },
     },
 
-    
     paidAt: {
         type: Date,
     },
@@ -58,19 +57,28 @@ const orderSchema = new mongoose.Schema({
         default: 0
     },
 
+    //  FIXED ORDER STATUS
     orderStatus: {
         type: String,
         required: true,
-        default: "Processing",
+        default: "Ordered",
+        enum: ["Ordered", "Shipped", "Delivered"],
     },
 
-    deliveredAt: Date,
-    shippedAt: Date,
+    //  Tracking Dates
+    shippedAt: {
+        type: Date,
+    },
+
+    deliveredAt: {
+        type: Date,
+    },
 
     createdAt: {
         type: Date,
         default: Date.now
     },
+
 });
 
 module.exports = mongoose.model("Order", orderSchema);

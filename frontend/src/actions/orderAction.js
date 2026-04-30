@@ -39,7 +39,6 @@ export const newOrder = (order) => async (dispatch) => {
       payload: data,
     });
 
-    
     return { payload: data };
 
   } catch (error) {
@@ -48,7 +47,6 @@ export const newOrder = (order) => async (dispatch) => {
       payload: error.response?.data?.message || error.message,
     });
 
-    
     throw error;
   }
 };
@@ -124,6 +122,7 @@ export const updateOrder = (id, order) => async (dispatch) => {
 
     const config = {
       headers: { "Content-Type": "application/json" },
+      withCredentials: true, 
     };
 
     const { data } = await API.put(`/admin/order/${id}`, order, config);

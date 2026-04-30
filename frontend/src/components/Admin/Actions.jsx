@@ -19,7 +19,7 @@ const Actions = ({ id, deleteHandler, name, editRoute }) => {
         <>
             <div className="flex justify-between items-center gap-3">
                 {editRoute !== "review" && (
-                    <Link to={`/admin/${editRoute}/${id}`} className="text-blue-600 hover:bg-blue-200 p-1 rounded-full bg-blue-100">
+                    <Link to={`/${editRoute}/${id}`} className="text-blue-600 hover:bg-blue-200 p-1 rounded-full bg-blue-100">
                         <EditIcon />
                     </Link>
                 )}
@@ -28,16 +28,13 @@ const Actions = ({ id, deleteHandler, name, editRoute }) => {
                 </button>
             </div>
 
-            <Dialog
-                open={open}
-                onClose={handleClose}
-                aria-labelledby="alert-dialog-title"
-            >
-                <DialogTitle id="alert-dialog-title">
-                    {"Are you sure?"}
-                </DialogTitle>
+            <Dialog open={open} onClose={handleClose}>
+                <DialogTitle>{"Are you sure?"}</DialogTitle>
                 <DialogContent>
-                    <p className="text-gray-500">Do you really want to delete{name && <span className="font-medium">&nbsp;{name}</span>}? This process cannot be undone.</p>
+                    <p className="text-gray-500">
+                        Do you really want to delete{name && <span className="font-medium">&nbsp;{name}</span>}?
+                        This process cannot be undone.
+                    </p>
                 </DialogContent>
                 <DialogActions>
                     <button onClick={handleClose} className="py-2 px-6 rounded shadow bg-gray-400 hover:bg-gray-500 text-white">Cancel</button>

@@ -16,6 +16,11 @@ import UpdatePassword from './components/User/UpdatePassword';
 import ForgotPassword from './components/User/ForgotPassword';
 import ResetPassword from './components/User/ResetPassword';
 
+// Address
+import Address from './components/User/Address';
+import AddAddress from './components/User/AddAddress';
+import EditAddress from './components/User/EditAddress';
+
 // Core
 import ProtectedRoute from './Routes/ProtectedRoute';
 import { loadUser } from './actions/userAction';
@@ -32,13 +37,18 @@ import OrderSuccess from './components/Cart/OrderSuccess';
 import OrderStatus from './components/Cart/OrderStatus';
 import OrderDetails from './components/Order/OrderDetails';
 
-//  ADMIN IMPORTS
+// Extra
+import Minutes from './components/Minutes/Minutes';
+import Travel from './components/Travel/Travel';
+
+// ADMIN
 import Dashboard from './components/Admin/Dashboard';
 import MainData from './components/Admin/MainData';
 import ProductTable from './components/Admin/ProductTable';
 import OrderTable from './components/Admin/OrderTable';
 import NewProduct from './components/Admin/NewProduct';
 import UpdateProduct from './components/Admin/UpdateProduct';
+import UpdateOrder from './components/Admin/UpdateOrder'; // ✅ ADDED
 import UserTable from './components/Admin/UserTable';
 import ReviewsTable from './components/Admin/ReviewsTable';
 
@@ -101,11 +111,16 @@ function App() {
           <Route path="/account/*" element={<ProtectedRoute><Account /></ProtectedRoute>} />
           <Route path="/account/update" element={<ProtectedRoute><UpdateProfile /></ProtectedRoute>} />
 
+          {/* ADDRESS */}
+          <Route path="/account/address" element={<ProtectedRoute><Address /></ProtectedRoute>} />
+          <Route path="/account/address/new" element={<ProtectedRoute><AddAddress /></ProtectedRoute>} />
+          <Route path="/account/address/edit/:id" element={<ProtectedRoute><EditAddress /></ProtectedRoute>} />
+
           <Route path="/password/update" element={<ProtectedRoute><UpdatePassword /></ProtectedRoute>} />
           <Route path="/password/forgot" element={<ForgotPassword />} />
           <Route path="/password/reset/:token" element={<ResetPassword />} />
 
-          {/*  ADMIN ROUTES */}
+          {/* ADMIN */}
           <Route
             path="/admin/dashboard"
             element={
@@ -134,6 +149,18 @@ function App() {
               <ProtectedRoute isAdmin={true}>
                 <Dashboard activeTab={1}>
                   <OrderTable />
+                </Dashboard>
+              </ProtectedRoute>
+            }
+          />
+
+          {/* ✅ FINAL FIX (ORDER EDIT ROUTE) */}
+          <Route
+            path="/admin/order/:id"
+            element={
+              <ProtectedRoute isAdmin={true}>
+                <Dashboard activeTab={1}>
+                  <UpdateOrder />
                 </Dashboard>
               </ProtectedRoute>
             }
@@ -183,7 +210,11 @@ function App() {
             }
           />
 
-          {/*  DROPDOWN EXTRA ROUTES */}
+          {/* EXTRA */}
+          <Route path="/minutes" element={<Minutes />} />
+          <Route path="/travel" element={<Travel />} />
+
+          {/* MISC */}
           <Route path="/seller" element={<div className="p-10 text-xl">Become a Seller Page</div>} />
           <Route path="/notifications" element={<div className="p-10 text-xl">Notification Settings</div>} />
           <Route path="/support" element={<div className="p-10 text-xl">24x7 Customer Care</div>} />

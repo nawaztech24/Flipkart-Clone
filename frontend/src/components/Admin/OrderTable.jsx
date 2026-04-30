@@ -100,7 +100,11 @@ const OrderTable = () => {
             sortable: false,
             renderCell: (params) => {
                 return (
-                    <Actions editRoute={"order"} deleteHandler={deleteOrderHandler} id={params.row.id} />
+                    <Actions 
+                        editRoute={"admin/order"}   // ✅ FIXED
+                        deleteHandler={deleteOrderHandler} 
+                        id={params.row.id} 
+                    />
                 );
             },
         },
