@@ -101,7 +101,7 @@ const OrderTable = () => {
             renderCell: (params) => {
                 return (
                     <Actions 
-                        editRoute={"admin/order"}   // ✅ FIXED
+                        editRoute={"admin/order"}   
                         deleteHandler={deleteOrderHandler} 
                         id={params.row.id} 
                     />

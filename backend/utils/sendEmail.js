@@ -6,13 +6,12 @@ const sendEmail = async (options) => {
 
         const transporter = nodemailer.createTransport({
             host: "smtp.gmail.com",
-            port: 587,
-            secure: false,
+            port: 465, 
+            secure: true, 
             auth: {
                 user: process.env.SMTP_MAIL,
                 pass: process.env.SMTP_PASSWORD,
             },
-            connectionTimeout: 5000, // prevent hanging
         });
 
         console.log("SENDING EMAIL...");
@@ -27,7 +26,7 @@ const sendEmail = async (options) => {
         console.log("EMAIL SENT SUCCESS:", info.response);
 
     } catch (error) {
-        console.log("EMAIL ERROR FULL:", error.message);
+        console.log("EMAIL ERROR FULL:", error);
     }
 };
 

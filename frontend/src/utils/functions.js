@@ -4,14 +4,33 @@ export const getDiscount = (price, cuttedPrice) => {
 
 export const getDeliveryDate = () => {
     const deliveryDate = new Date();
-    deliveryDate.setDate(new Date().getDate() + 7)
-    return deliveryDate.toUTCString().substring(0, 11);
+    deliveryDate.setDate(new Date().getDate() + 7);
+
+    return deliveryDate.toLocaleDateString("en-IN", {
+        timeZone: "Asia/Kolkata",
+        weekday: "short",
+        day: "2-digit",
+        month: "short",
+        year: "numeric",
+    });
 }
 
 export const formatDate = (dt) => {
-    return new Date(dt).toUTCString().substring(0,16);
+    if (!dt) return null;
+
+    const d = new Date(dt);
+
+    if (isNaN(d.getTime())) return null;
+
+    return d.toLocaleDateString("en-IN", {
+        timeZone: "Asia/Kolkata", // 🔥 FIX
+        weekday: "short",
+        day: "2-digit",
+        month: "short",
+        year: "numeric",
+    });
 }
 
 export const getRandomProducts = (prodsArray, n) => {
-    return prodsArray.sort(() => 0.5 - Math.random()).slice(0, n)
+    return prodsArray.sort(() => 0.5 - Math.random()).slice(0, n);
 }

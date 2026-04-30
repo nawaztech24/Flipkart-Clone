@@ -40,7 +40,7 @@ import {
 } from '../constants/userConstants';
 
 
-// ✅ Login User
+//  Login User
 export const loginUser = (email, password) => async (dispatch) => {
     try {
         dispatch({ type: LOGIN_USER_REQUEST });
@@ -69,7 +69,7 @@ export const loginUser = (email, password) => async (dispatch) => {
 };
 
 
-// ✅ Register User
+//  Register User
 export const registerUser = (userData) => async (dispatch) => {
     try {
         dispatch({ type: REGISTER_USER_REQUEST });
@@ -98,7 +98,7 @@ export const registerUser = (userData) => async (dispatch) => {
 };
 
 
-// ✅ Load User
+//  Load User
 export const loadUser = () => async (dispatch) => {
     try {
         dispatch({ type: LOAD_USER_REQUEST });
@@ -119,7 +119,7 @@ export const loadUser = () => async (dispatch) => {
 };
 
 
-// ✅ Logout User
+//  Logout User
 export const logoutUser = () => async (dispatch) => {
     try {
         await API.get(`/logout`);
@@ -133,7 +133,7 @@ export const logoutUser = () => async (dispatch) => {
 };
 
 
-// ✅ Update Profile
+//  Update Profile
 export const updateProfile = (userData) => async (dispatch) => {
     try {
         dispatch({ type: UPDATE_PROFILE_REQUEST });
@@ -162,7 +162,7 @@ export const updateProfile = (userData) => async (dispatch) => {
 };
 
 
-// ✅ Update Password
+//  Update Password
 export const updatePassword = (passwords) => async (dispatch) => {
     try {
         dispatch({ type: UPDATE_PASSWORD_REQUEST });
@@ -191,7 +191,7 @@ export const updatePassword = (passwords) => async (dispatch) => {
 };
 
 
-// ✅ Forgot Password
+//  Forgot Password
 export const forgotPassword = (email) => async (dispatch) => {
     try {
         dispatch({ type: FORGOT_PASSWORD_REQUEST });
@@ -220,7 +220,7 @@ export const forgotPassword = (email) => async (dispatch) => {
 };
 
 
-// ✅ Reset Password
+// Reset Password
 export const resetPassword = (token, passwords) => async (dispatch) => {
     try {
         dispatch({ type: RESET_PASSWORD_REQUEST });
@@ -249,7 +249,7 @@ export const resetPassword = (token, passwords) => async (dispatch) => {
 };
 
 
-// ✅ Admin APIs
+// Admin APIs
 export const getAllUsers = () => async (dispatch) => {
     try {
         dispatch({ type: ALL_USERS_REQUEST });
@@ -338,7 +338,7 @@ export const deleteUser = (id) => async (dispatch) => {
 };
 
 
-// ✅ Clear Errors
+
 export const clearErrors = () => async (dispatch) => {
     dispatch({ type: CLEAR_ERRORS });
 };

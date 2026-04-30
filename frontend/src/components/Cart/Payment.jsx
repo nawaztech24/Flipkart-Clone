@@ -57,7 +57,7 @@ const Payment = () => {
 
       console.log("SENDING ORDER:", order);
 
-      // ✅ CORRECT API CALL (NO stringify)
+      
       const res = await API.post("/order/new", order, {
         headers: {
           "Content-Type": "application/json",
@@ -86,7 +86,7 @@ const Payment = () => {
 
       enqueueSnackbar("Order Placed Successfully!", { variant: "success" });
 
-      // ✅ simple redirect (no extra API)
+      
       navigate("/", { replace: true });
 
     } catch (err) {

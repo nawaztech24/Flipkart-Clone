@@ -30,7 +30,7 @@ const MainData = () => {
         dispatch(getAllUsers());
     }, [dispatch]);
 
-    // ✅ SAFE total calculation
+    
     let totalAmount = orders.reduce(
         (total, order) => total + (order?.totalPrice || 0),
         0

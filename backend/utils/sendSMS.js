@@ -15,11 +15,11 @@ const sendSMS = async (phone, message) => {
                     authorization: process.env.FAST2SMS_API_KEY,
                 },
                 params: {
-                    route: "q",
+                    route: "v3",
                     message: message,
                     numbers: cleanPhone,
                 },
-                timeout: 5000, // prevent hanging
+                timeout: 5000, 
             }
         );
 

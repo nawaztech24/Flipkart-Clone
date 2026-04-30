@@ -2,7 +2,7 @@ import { useSnackbar } from 'notistack';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
-import API from "../../api/axios"; // ✅ FIXED (use same axios instance)
+import API from "../../api/axios"; 
 import { clearErrors, getOrderDetails } from '../../actions/orderAction';
 import Loader from '../Layouts/Loader';
 import TrackStepper from './TrackStepper';
@@ -32,7 +32,7 @@ const OrderDetails = () => {
 
     const cancelHandler = async () => {
         try {
-            // ✅ FIXED API CALL
+            
             await API.put(`/order/${order._id}/cancel`);
 
             enqueueSnackbar("Order Cancelled Successfully", { variant: "success" });

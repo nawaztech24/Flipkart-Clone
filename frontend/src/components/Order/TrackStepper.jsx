@@ -4,11 +4,10 @@ import { formatDate } from '../../utils/functions';
 
 const TrackStepper = ({ activeStep, orderOn, shippedAt, deliveredAt }) => {
 
-    
     if (activeStep === -1) {
         return (
             <div className="text-red-500 font-medium text-center mt-4">
-                
+                Order Cancelled
             </div>
         );
     }
@@ -16,20 +15,20 @@ const TrackStepper = ({ activeStep, orderOn, shippedAt, deliveredAt }) => {
     const steps = [
         {
             status: "Ordered",
-            dt: formatDate(orderOn),
+            dt: orderOn ? formatDate(orderOn) : null,
         },
         {
             status: "Shipped",
-            dt: formatDate(shippedAt),
+            dt: shippedAt ? formatDate(shippedAt) : null,
         },
         {
             status: "Delivered",
-            dt: formatDate(deliveredAt),
+            dt: deliveredAt ? formatDate(deliveredAt) : null,
         },
     ];
 
     const completedIcon = (
-        <span className="text-primary-green animate-pulse">
+        <span className="text-primary-green">
             <CircleIcon sx={{ fontSize: "16px" }} />
         </span>
     );
@@ -49,16 +48,16 @@ const TrackStepper = ({ activeStep, orderOn, shippedAt, deliveredAt }) => {
                     completed={activeStep >= index}
                 >
                     <StepLabel
-                        icon={
-                            activeStep >= index ? completedIcon : pendingIcon
-                        }
+                        icon={activeStep >= index ? completedIcon : pendingIcon}
                     >
                         {activeStep >= index ? (
                             <div className="flex flex-col">
                                 <span className="text-primary-green font-medium">
                                     {item.status}
                                 </span>
-                                {item.dt !== "Invalid Date" && (
+
+                                
+                                {item.dt && (
                                     <span className="text-primary-green font-medium">
                                         {item.dt}
                                     </span>
