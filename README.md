@@ -16,7 +16,7 @@ A full-featured e-commerce web application inspired by Flipkart, built using the
 * View Order History
 * Address Management
 
-### 🛠️ Admin Features
+###  Admin Features
 
 * Admin Dashboard
 * Manage Products (Add / Edit / Delete)
