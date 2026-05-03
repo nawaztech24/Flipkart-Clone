@@ -55,9 +55,6 @@ const Payment = () => {
             : { id: "FAKE_PAYMENT", status: "succeeded" },
       };
 
-      console.log("SENDING ORDER:", order);
-
-      
       const res = await API.post("/order/new", order, {
         headers: {
           "Content-Type": "application/json",
@@ -80,22 +77,33 @@ const Payment = () => {
         })
       );
 
-      // clear cart
       dispatch({ type: EMPTY_CART });
       localStorage.removeItem("cartItems");
 
-      enqueueSnackbar("Order Placed Successfully!", { variant: "success" });
+      
+      if (method === "COD") {
+        enqueueSnackbar("Order Placed (Cash on Delivery)", { variant: "success" });
+      } else {
+        enqueueSnackbar("Order Placed (Payment Successful)", { variant: "success" });
+      }
 
       
-      navigate("/", { replace: true });
+      navigate("/orders/success", {
+        state: {
+          success: true,
+          method: method
+        }
+      });
 
     } catch (err) {
-      console.log("ERROR:", err.response?.data || err.message);
-
       enqueueSnackbar(
         err.response?.data?.message || "Order Failed",
         { variant: "error" }
       );
+
+      navigate("/orders/success", {
+        state: { success: false }
+      });
     } finally {
       setProcessing(false);
     }

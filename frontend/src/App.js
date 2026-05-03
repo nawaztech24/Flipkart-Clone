@@ -48,7 +48,7 @@ import ProductTable from './components/Admin/ProductTable';
 import OrderTable from './components/Admin/OrderTable';
 import NewProduct from './components/Admin/NewProduct';
 import UpdateProduct from './components/Admin/UpdateProduct';
-import UpdateOrder from './components/Admin/UpdateOrder'; // ✅ ADDED
+import UpdateOrder from './components/Admin/UpdateOrder';
 import UserTable from './components/Admin/UserTable';
 import ReviewsTable from './components/Admin/ReviewsTable';
 
@@ -102,7 +102,8 @@ function App() {
           <Route path="/order/confirm" element={<ProtectedRoute><OrderConfirm /></ProtectedRoute>} />
           <Route path="/payment" element={<ProtectedRoute><Payment /></ProtectedRoute>} />
 
-          <Route path="/orders/success" element={<OrderSuccess success={true} />} />
+          {/* FIXED */}
+          <Route path="/orders/success" element={<OrderSuccess />} />
 
           <Route path="/order/:id" element={<ProtectedRoute><OrderStatus /></ProtectedRoute>} />
           <Route path="/order_details/:id" element={<ProtectedRoute><OrderDetails /></ProtectedRoute>} />
@@ -154,7 +155,6 @@ function App() {
             }
           />
 
-          
           <Route
             path="/admin/order/:id"
             element={

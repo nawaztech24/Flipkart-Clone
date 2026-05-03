@@ -1,15 +1,19 @@
 import { useEffect, useState, useMemo } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import MetaData from '../Layouts/MetaData';
 import successfull from '../../assets/images/Transaction/success.png';
 import failed from '../../assets/images/Transaction/failed.png';
 
-const OrderSuccess = ({ success }) => {
+const OrderSuccess = () => {
 
     const navigate = useNavigate();
+    const location = useLocation();
+
+    const success = location.state?.success;
+    const method = location.state?.method; 
+
     const [time, setTime] = useState(3);
 
-    
     const orderData = useMemo(() => {
         return JSON.parse(localStorage.getItem("lastOrder")) || {};
     }, []);
@@ -18,12 +22,7 @@ const OrderSuccess = ({ success }) => {
 
         if (time === 0) {
             if (success) {
-                
-                if (orderData?.orderId) {
-                    navigate(`/order/${orderData.orderId}`);
-                } else {
-                    navigate("/");
-                }
+                navigate("/");
             } else {
                 navigate("/cart");
             }
@@ -36,7 +35,7 @@ const OrderSuccess = ({ success }) => {
 
         return () => clearInterval(intervalId);
 
-    }, [time, navigate, success, orderData]);
+    }, [time, navigate, success]);
 
     return (
         <>
@@ -53,8 +52,13 @@ const OrderSuccess = ({ success }) => {
                         alt="Transaction Status"
                     />
 
+                    {/* UPDATED TITLE */}
                     <h1 className="text-2xl font-semibold">
-                        Transaction {success ? "Successful" : "Failed"}
+                        {success
+                            ? method === "COD"
+                                ? "Order Placed Successfully"
+                                : "Payment Successful 🎉"
+                            : "Transaction Failed"}
                     </h1>
 
                     {success && (
@@ -76,10 +80,10 @@ const OrderSuccess = ({ success }) => {
                     </p>
 
                     <Link
-                        to={success && orderData?.orderId ? `/order/${orderData.orderId}` : "/"}
+                        to="/"
                         className="bg-primary-blue mt-2 py-2.5 px-6 text-white uppercase shadow hover:shadow-lg rounded-sm"
                     >
-                        Go to Order
+                        Continue Shopping
                     </Link>
 
                 </div>

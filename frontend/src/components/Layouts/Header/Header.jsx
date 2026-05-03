@@ -2,6 +2,8 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import LocationOnIcon from '@mui/icons-material/LocationOn'; // ✅ ADDED
+
 import Searchbar from './Searchbar';
 import logo from '../../../assets/images/logo.png';
 import travelIcon from '../../../assets/images/travel-icon.png';
@@ -92,6 +94,9 @@ const Header = () => {
 
             {/* LOCATION */}
             <div className="flex items-center gap-2 text-gray-700">
+              
+              <LocationOnIcon className="text-gray-600" /> {/* ✅ ADDED */}
+
               <span className="truncate max-w-[120px]">
                 {location || "Location not set"}
               </span>
